@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur lien ADE trié</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        h1 {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        #courseForm {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .course-selection,
+        .group-selection,
+        .option-selection,
+        .option-group-selection {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .mention-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        button[type="submit"] {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        button[type="submit"]:hover {
+            background: #555;
+        }
+
+        #generatedLink {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        #generatedLink h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        #generatedLink a {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        #generatedLink button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        #generatedLink button:hover {
+            background: #0056b3;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 4px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+                padding: 15px;
+            }
+
+            #courseForm {
+                padding: 15px;
+            }
+
+            label {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Choix de vos cours</h1>
+
+        <form id="courseForm">
+            <div class="course-selection">
+                <h2>Séléctionnez votre parcours :</h2>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="IDL" name="mentions" value="IDL">
+                    <label for="IDL">IDL</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="I3A" name="mentions" value="I3A">
+                    <label for="I3A">I3A</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="FSI" name="mentions" value="FSI">
+                    <label for="FSI">FSI</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="GIG" name="mentions" value="GIG">
+                    <label for="GIG">GIG</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="IMD" name="mentions" value="IMD">
+                    <label for="IMD">IMD</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="SID" name="mentions" value="SID">
+                    <label for="SID">SID</label>
+                </div>
+            </div>
+
+            <div class="group-selection">
+                <h2>Sélectionnez votre groupe de TD/TP</h2>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TD1" name="groups" value="TD1">
+                    <label for="TD1">TD1</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TD2" name="groups" value="TD2">
+                    <label for="TD2">TD2</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TD3" name="groups" value="TD3">
+                    <label for="TD3">TD3</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TD4" name="groups" value="TD4">
+                    <label for="TD4">TD4</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TP1" name="groups" value="TP1">
+                    <label for="TP1">TP1</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TP2" name="groups" value="TP2">
+                    <label for="TP2">TP2</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TP3" name="groups" value="TP3">
+                    <label for="TP3">TP3</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="TP4" name="groups" value="TP4">
+                    <label for="TP4">TP4</label>
+                </div>
+            </div>
+
+            <div class="option-selection">
+                <h2>Sélectionnez vos options</h2>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="cpp" name="options" value="cpp">
+                    <label for="cpp">Programmation C++ (70)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="crypto" name="options" value="crypto">
+                    <label for="crypto">Cryptographie (56)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="intro-science-donnees" name="options" value="intro-science-donnees">
+                    <label for="intro-science-donnees">Intro. aux sciences des données (103)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="methode-numeriques" name="options" value="methode-numeriques">
+                    <label for="methode-numeriques">Méthodes numériques (60)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="prog-fonctionnelle" name="options" value="prog-fonctionnelle">
+                    <label for="prog-fonctionnelle">Programmation fonctionnelle (22)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="proba" name="options" value="proba">
+                    <label for="proba">Probabilités pour l'informatique (34)</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="securite-des-apps" name="options" value="securite-des-apps">
+                    <label for="securite-des-apps">Sécurité des applications (56)</label>
+                </div>
+            </div>
+
+            <div class="option-group-selection">
+
+                <h2>Sélectionnez vos groupes d'option</h2>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="A1" name="option-groups" value="A1">
+                    <label for="A1">A1</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="A2" name="option-groups" value="A2">
+                    <label for="A2">A2</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="A3" name="option-groups" value="A3">
+                    <label for="A3">A3</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="C1" name="option-groups" value="C1">
+                    <label for="C1">C1</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="C2" name="option-groups" value="C2">
+                    <label for="C2">C2</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="F1" name="option-groups" value="F1">
+                    <label for="F1">F1</label>
+                </div>
+
+                <div class="mention-item">
+                    <input type="checkbox" id="F2" name="option-groups" value="F2">
+                    <label for="F2">F2</label>
+                </div>
+
+            </div>
+
+            <button type="submit">Confirmer la sélection</button>
+        </form>
+
+        <div id="generatedLink" style="margin-top: 20px; display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('courseForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const checkedValues = {};
+
+            const mentions = Array.from(document.querySelectorAll('input[name="mentions"]:checked'))
+                .map(input => input.value);
+            if (mentions.length > 0) checkedValues.mentions = mentions;
+
+            const groups = Array.from(document.querySelectorAll('input[name="groups"]:checked'))
+                .map(input => input.value);
+            if (groups.length > 0) checkedValues.groups = groups;
+
+            const options = Array.from(document.querySelectorAll('input[name="options"]:checked'))
+                .map(input => input.value);
+            if (options.length > 0) checkedValues.options = options;
+
+            const optionGroups = Array.from(document.querySelectorAll('input[name="option-groups"]:checked'))
+                .map(input => input.value);
+            if (optionGroups.length > 0) checkedValues.optionGroups = optionGroups;
+
+            const params = new URLSearchParams();
+            Object.keys(checkedValues).forEach(key => {
+                checkedValues[key].forEach(value => {
+                    params.append(key, value);
+                });
+            });
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const generatedUrl = baseUrl + 'calendar.ics?' + params.toString();
+
+            const linkDiv = document.getElementById('generatedLink');
+            linkDiv.style.display = "";
+            linkDiv.innerHTML = `
+                <h3>Lien généré :</h3>
+                <p><a href="${generatedUrl}" target="_blank">${generatedUrl}</a></p>
+                <button onclick="navigator.clipboard.writeText('${generatedUrl}'); alert('copié !')">Copier le lien</button>
+            `;
+        });
+    </script>
+</body>
+
+</html>
