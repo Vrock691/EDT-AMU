@@ -10,101 +10,92 @@ import (
 
 func filterCalendar(mentions []Mention, groups []Group, options []Option, optionGroups []OptionGroup) ics.Calendar {
 
-	var eventToBanRegex []string
-	var filteredCal = *cal
+	var eventToRemoveRegex []string
+	filteredCal := *cal
 
-	// Filter course by mention
 	for _, mention := range mentions {
-		switch mention {
-		case "IDL":
-			fmt.Println("IDL")
-			eventToBanRegex = append(eventToBanRegex, CODE_SDD_AA, CODE_PROBA_POUR_INFORMATIQUE, CODE_CRYPTOGRAPHIE, CODE_PROG_CPP, CODE_PROG_FONCTIONNELLE, CODE_METHODE_NUM_INFORMATIQUE)
-
-		case "I3A":
-			fmt.Println("I3A")
-
-		case "FSI":
-			fmt.Println("FSI")
-
-		case "GIG":
-			fmt.Println("GIG")
-
-		case "IMG":
-			fmt.Println("IMD")
-
-		case "SID":
-			fmt.Println("SID")
-
+		if codes, exists := mentionToCodesMap[string(mention)]; exists {
+			eventToRemoveRegex = append(eventToRemoveRegex, codes...)
 		}
 	}
-
+	
 	// Remove unselected groups and add filter
-	groupsToBan := []string{"TD1", "TD2", "TD3|TD Gr3", "TD4", "TP1|TP Gr1", "TP2|TP Gr2", "TP3|TP Gr3", "TP4|TP 4"}
+	groupsToBan := make([]string, 0, len(groupToRegexMap))
+	for _, pattern := range groupToRegexMap {
+		groupsToBan = append(groupsToBan, pattern)
+	}
+
 	for _, group := range groups {
-		switch group {
-		case "TD1":
-			groupsToBan = removeString(groupsToBan, "TD1")
-		case "TD2":
-			groupsToBan = removeString(groupsToBan, "TD2")
-		case "TD3":
-			groupsToBan = removeString(groupsToBan, "TD3|TD Gr3")
-		case "TD4":
-			groupsToBan = removeString(groupsToBan, "TD4")
-		case "TP1":
-			groupsToBan = removeString(groupsToBan, "TP1|TP Gr1")
-		case "TP2":
-			groupsToBan = removeString(groupsToBan, "TP2|TP Gr2")
-		case "TP3":
-			groupsToBan = removeString(groupsToBan, "TP3|TP Gr3")
-		case "TP4":
-			groupsToBan = removeString(groupsToBan, "TP4|TP 4")
+		if pattern, exists := groupToRegexMap[group]; exists {
+			groupsToBan = removeStringFromList(groupsToBan, pattern)
 		}
 	}
-	eventToBanRegex = append(eventToBanRegex, groupsToBan...)
+	eventToRemoveRegex = append(eventToRemoveRegex, groupsToBan...)
 
 	// Filter events with options
 	for _, option := range options {
 		switch option {
 		case "cpp":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_PROG_CPP)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROG_CPP)
 		case "crypto":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_CRYPTOGRAPHIE)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_CRYPTOGRAPHIE)
 		case "intro-science-donnees":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_SDD_AA)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_SDD_AA)
 		case "methode-numeriques":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_METHODE_NUM_INFORMATIQUE)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_METHODE_NUM_INFORMATIQUE)
 		case "prog-fonctionnelle":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_PROG_FONCTIONNELLE)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROG_FONCTIONNELLE)
 		case "proba":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_PROBA_POUR_INFORMATIQUE)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROBA_POUR_INFORMATIQUE)
 		case "securite-des-apps":
-			eventToBanRegex = removeString(eventToBanRegex, CODE_SECURITE_DES_APPS)
+			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_SECURITE_DES_APPS)
 		}
 	}
 
 	// Filter by option group
-	optionGroupToBan := []string{}
-	allOptionGroups := []string{"A1", "A2", "A3", "C1", "C2", "F1", "F2"}
-	for _, optionGroup := range allOptionGroups {
-		found := false
-		for _, selectedGroup := range optionGroups {
-			if string(selectedGroup) == optionGroup {
-				found = true
-				break
-			}
-		}
-		if !found {
-			optionGroupToBan = append(optionGroupToBan, optionGroup)
+	allOptionGroups := []string{" Gr A1", " Gr A2", " Gr A3", " Gr C1", " Gr C2", " F1", " F2", " H1", " H2", " E1", " E2", " D1", " D2", " G1", " G2"}
+	for _, optionGroup := range optionGroups {
+		switch optionGroup {
+		case "A1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A1")
+		case "A2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A2")
+		case "A3":
+			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A3")
+		case "C1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " Gr C1")
+		case "C2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " Gr C2")
+		case "F1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " F1")
+		case "F2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " F2")
+		case "H1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " H1")
+		case "H2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " H2")
+		case "E1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " E1")
+		case "E2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " E2")
+		case "D1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " D1")
+		case "D2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " D2")
+		case "G1":
+			allOptionGroups = removeStringFromList(allOptionGroups, " G1")
+		case "G2":
+			allOptionGroups = removeStringFromList(allOptionGroups, " G2")
 		}
 	}
-	eventToBanRegex = append(eventToBanRegex, optionGroupToBan...)
+	eventToRemoveRegex = append(eventToRemoveRegex, allOptionGroups...)
 
 	// Filter events with the regex created previously
-	fmt.Println(strings.Join(eventToBanRegex, "|"))
+	fmt.Println(strings.Join(eventToRemoveRegex, "|"))
 	for _, value := range filteredCal.Events() {
 		if value.GetProperty(ics.ComponentProperty(ics.PropertySummary)) != nil {
 			summary := value.GetProperty(ics.ComponentProperty(ics.PropertySummary)).Value
-			matched, _ := regexp.MatchString(strings.Join(eventToBanRegex, "|"), summary)
+			matched, _ := regexp.MatchString(strings.Join(eventToRemoveRegex, "|"), summary)
 			if matched {
 				filteredCal.RemoveEvent(value.Id())
 			}
@@ -115,7 +106,7 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 
 }
 
-func removeString(s []string, r string) []string {
+func removeStringFromList(s []string, r string) []string {
 	for i, v := range s {
 		if v == r {
 			return append(s[:i], s[i+1:]...)

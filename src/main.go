@@ -42,6 +42,7 @@ func main() {
 		var optionGroups []OptionGroup
 		json.Unmarshal([]byte(query.Get("optionGroups")), &optionGroups)
 
+		fmt.Println(mentions, groups, options, optionGroups)
 		filteredCal := filterCalendar(mentions, groups, options, optionGroups)
 
 		fmt.Println("Obtention du calendrier")
