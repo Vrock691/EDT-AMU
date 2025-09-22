@@ -64,7 +64,7 @@
             padding: 5px 0;
         }
 
-        input[type="checkbox"] {
+        input[type="checkbox"], input[type="radio"] {
             width: 16px;
             height: 16px;
             margin-right: 10px;
@@ -164,32 +164,32 @@
                 <h2>Séléctionnez votre parcours :</h2>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="IDL" name="mentions" value="IDL">
+                    <input type="radio" id="IDL" name="mentions" value="IDL">
                     <label for="IDL">IDL</label>
                 </div>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="I3A" name="mentions" value="I3A">
+                    <input type="radio" id="I3A" name="mentions" value="I3A">
                     <label for="I3A">I3A</label>
                 </div>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="FSI" name="mentions" value="FSI">
+                    <input type="radio" id="FSI" name="mentions" value="FSI">
                     <label for="FSI">FSI</label>
                 </div>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="GIG" name="mentions" value="GIG">
+                    <input type="radio" id="GIG" name="mentions" value="GIG">
                     <label for="GIG">GIG</label>
                 </div>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="IMD" name="mentions" value="IMD">
+                    <input type="radio" id="IMD" name="mentions" value="IMD">
                     <label for="IMD">IMD</label>
                 </div>
 
                 <div class="mention-item">
-                    <input type="checkbox" id="SID" name="mentions" value="SID">
+                    <input type="radio" id="SID" name="mentions" value="SID">
                     <label for="SID">SID</label>
                 </div>
             </div>
@@ -347,13 +347,11 @@
 
             const params = new URLSearchParams();
             Object.keys(checkedValues).forEach(key => {
-                checkedValues[key].forEach(value => {
-                    params.append(key, value);
-                });
+                params.append(key, JSON.stringify(checkedValues[key]));
             });
 
-            const baseUrl = window.location.origin + window.location.pathname;
-            const generatedUrl = baseUrl + 'calendar.ics?' + params.toString();
+            const baseUrl = window.location.origin;
+            const generatedUrl = baseUrl + '/api/v1/M1/calendar.ics?' + params.toString();
 
             const linkDiv = document.getElementById('generatedLink');
             linkDiv.style.display = "";

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -20,16 +21,33 @@ func main() {
 	})
 
 	// Define the ics route
-	http.HandleFunc("/calendar.ics", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/v1/M1/calendar.ics", func(w http.ResponseWriter, r *http.Request) {
 
-		// TODO: Add filtering
+		// Get URL parameters
+		query := r.URL.Query()
+
+		// Get mentions
+		var mentions []Mention
+		json.Unmarshal([]byte(query.Get("mentions")), &mentions)
+
+		// Get groups
+		var groups []Group
+		json.Unmarshal([]byte(query.Get("groups")), &groups)
+
+		// Get options
+		var options []Option
+		json.Unmarshal([]byte(query.Get("options")), &options)
+
+		// Get options-group
+		var optionGroups []OptionGroup
+		json.Unmarshal([]byte(query.Get("optionGroups")), &optionGroups)
+
+		filteredCal := filterCalendar(mentions, groups, options, optionGroups)
 
 		fmt.Println("Obtention du calendrier")
 		w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
 		w.Header().Set("Content-Disposition", "attachment; filename=calendar.ics")
-		if cal != nil {
-			fmt.Fprint(w, cal.Serialize())
-		}
+		fmt.Fprint(w, filteredCal.Serialize())
 	})
 
 	// Start the http server
