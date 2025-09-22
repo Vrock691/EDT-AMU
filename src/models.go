@@ -10,7 +10,7 @@ type OptionGroup string
 const CODE_POC string = "SINA09D"
 const CODE_SDD_AA string = "SINA10B"
 const CODE_COMPLEXITE string = "SINA09B"
-const CODE_BDD_AVANCE string = "SINA20B"
+const CODE_BDD_AVANCE string = "SINA20A"
 const CODE_PROBA_POUR_INFORMATIQUE string = "SINA12A"
 const CODE_GENIE_LOG string = "SINA09E"
 const CODE_CRYPTOGRAPHIE string = "SINA09F"
