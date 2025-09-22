@@ -17,7 +17,7 @@ func main() {
 
 	// Define the front route
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "src/html/index.html")
+		http.ServeFile(w, r, "./html/index.html")
 	})
 
 	// Define the ics route
