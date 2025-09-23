@@ -18,7 +18,7 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 			eventToRemoveRegex = append(eventToRemoveRegex, codes...)
 		}
 	}
-	
+
 	// Remove unselected groups and add filter
 	groupsToBan := make([]string, 0, len(groupToRegexMap))
 	for _, pattern := range groupToRegexMap {
@@ -53,39 +53,13 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 	}
 
 	// Filter by option group
-	allOptionGroups := []string{" Gr A1", " Gr A2", " Gr A3", " Gr C1", " Gr C2", " F1", " F2", " H1", " H2", " E1", " E2", " D1", " D2", " G1", " G2"}
+	allOptionGroups := make([]string, 0, len(optionGroupNumberToRegexMap))
+	for _, pattern := range optionGroupNumberToRegexMap {
+		allOptionGroups = append(allOptionGroups, pattern)
+	}
 	for _, optionGroup := range optionGroups {
-		switch optionGroup {
-		case "A1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A1")
-		case "A2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A2")
-		case "A3":
-			allOptionGroups = removeStringFromList(allOptionGroups, " Gr A3")
-		case "C1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " Gr C1")
-		case "C2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " Gr C2")
-		case "F1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " F1")
-		case "F2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " F2")
-		case "H1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " H1")
-		case "H2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " H2")
-		case "E1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " E1")
-		case "E2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " E2")
-		case "D1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " D1")
-		case "D2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " D2")
-		case "G1":
-			allOptionGroups = removeStringFromList(allOptionGroups, " G1")
-		case "G2":
-			allOptionGroups = removeStringFromList(allOptionGroups, " G2")
+		if pattern, exists := optionGroupNumberToRegexMap[string(optionGroup)]; exists {
+			allOptionGroups = removeStringFromList(allOptionGroups, pattern)
 		}
 	}
 	eventToRemoveRegex = append(eventToRemoveRegex, allOptionGroups...)

@@ -6,7 +6,7 @@ type Group string
 type Option string
 type OptionGroup string
 
-// CODE APOGE FROM ametice.univ-amu.fr/pluginfile.php/9746522/mod_resource/content/6/%402025-08-29_-_M1_%3D_Liste_des_ECUE.pdf
+// CODE APOGEE FROM ametice.univ-amu.fr/pluginfile.php/9746522/mod_resource/content/6/%402025-08-29_-_M1_%3D_Liste_des_ECUE.pdf
 const CODE_POC string = "SINA09D"
 const CODE_SDD_AA string = "SINA10B"
 const CODE_COMPLEXITE string = "SINA09B"
@@ -69,4 +69,23 @@ var groupToRegexMap = map[Group]string{
 	"TP2": " TP2| TP Gr2",
 	"TP3": " TP3| TP Gr3",
 	"TP4": " TP4| TP 4",
+}
+
+// Transcript option group numbers to regex expressions
+var optionGroupNumberToRegexMap = map[string]string{
+	"A1": " Gr A1",
+	"A2": " Gr A2",
+	"A3": " Gr A3",
+	"C1": " Gr C1",
+	"C2": " Gr C2",
+	"F1": " F1",
+	"F2": " F2",
+	"H1": " H1",
+	"H2": " H2",
+	"E1": " E1",
+	"E2": " E2",
+	"D1": " D1",
+	"D2": " D2",
+	"G1": " G1",
+	"G2": " G2",
 }
