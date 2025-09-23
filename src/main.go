@@ -42,10 +42,8 @@ func main() {
 		var optionGroups []OptionGroup
 		json.Unmarshal([]byte(query.Get("optionGroups")), &optionGroups)
 
-		fmt.Println(mentions, groups, options, optionGroups)
 		filteredCal := filterCalendar(mentions, groups, options, optionGroups)
 
-		fmt.Println("Obtention du calendrier")
 		w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
 		w.Header().Set("Content-Disposition", "attachment; filename=calendar.ics")
 		fmt.Fprint(w, filteredCal.Serialize())

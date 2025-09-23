@@ -1,21 +1,34 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	ics "github.com/arran4/golang-ical"
 )
 
 func StartPeriodicFetching() {
+	var err error
+
 	ticker := time.NewTicker(time.Hour)
 	defer ticker.Stop()
-	
+
 	// Fetch immediately
-	cal, _ = ics.ParseCalendarFromUrl(generateURL())
+	fmt.Println("Fetching calendar...")
+	cal, err = ics.ParseCalendarFromUrl(generateURL())
+	if err != nil {
+		fmt.Println("Error fetching calendar:", err)
+		return
+	}
 
 	// Then fetch every hour
 	for range ticker.C {
-		cal, _ = ics.ParseCalendarFromUrl(generateURL())
+		fmt.Println("Fetching calendar...")
+		cal, err = ics.ParseCalendarFromUrl(generateURL())
+		if err != nil {
+			fmt.Println("Error fetching calendar:", err)
+			continue
+		}
 	}
 }
 

@@ -64,7 +64,8 @@
             padding: 5px 0;
         }
 
-        input[type="checkbox"], input[type="radio"] {
+        input[type="checkbox"],
+        input[type="radio"] {
             width: 16px;
             height: 16px;
             margin-right: 10px;
@@ -130,6 +131,13 @@
             background: #0056b3;
         }
 
+        footer {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 10px;
@@ -150,6 +158,11 @@
 
             label {
                 font-size: 0.85rem;
+            }
+
+            footer {
+                font-size: 0.7rem;
+                text-align: center;
             }
         }
     </style>
@@ -359,10 +372,15 @@
             </div>
 
             <button type="submit">Confirmer la sélection</button>
+
+            <div id="generatedLink" style="margin-top: 20px; display: none;"></div>
         </form>
 
-        <div id="generatedLink" style="margin-top: 20px; display: none;"></div>
     </div>
+    <footer>
+        <p>Initiative étudiante, non supporté par AMU.</p>
+        <a href="https://github.com/Vrock691/EDT-AMU">Contribuer sur Github</a>
+    </footer>
 
     <script>
         document.getElementById('courseForm').addEventListener('submit', function (e) {
@@ -397,6 +415,7 @@
             linkDiv.style.display = "";
             linkDiv.innerHTML = `
                 <h3>Lien généré :</h3>
+                <p>Copiez ce lien dans votre application de calendrier (Google Calendar, Outlook, Apple Calendar, etc.) pour synchroniser votre emploi du temps personnalisé. Conseil : Ajoutez ce lien dans Google Calendar comme URL d'abonnement pour bénéficier des mises à jour automatiques.</p>
                 <p><a href="${generatedUrl}" target="_blank">${generatedUrl}</a></p>
                 <button onclick="navigator.clipboard.writeText('${generatedUrl}'); alert('copié !')">Copier le lien</button>
             `;

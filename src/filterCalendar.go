@@ -8,18 +8,25 @@ import (
 	ics "github.com/arran4/golang-ical"
 )
 
+/*
+Filters the calendar events based on the selected mentions, groups, options, and option groups
+*/
 func filterCalendar(mentions []Mention, groups []Group, options []Option, optionGroups []OptionGroup) ics.Calendar {
 
+	// Create a regex expression to remove undesired events
 	var eventToRemoveRegex []string
+
+	// Copy the source calendar
 	filteredCal := *cal
 
+	// Add to regex every events that are not in the selected mentions
 	for _, mention := range mentions {
 		if codes, exists := mentionToCodesMap[string(mention)]; exists {
 			eventToRemoveRegex = append(eventToRemoveRegex, codes...)
 		}
 	}
 
-	// Remove unselected groups and add filter
+	// Add to regex every events that are not in the selected groups
 	groupsToBan := make([]string, 0, len(groupToRegexMap))
 	for _, pattern := range groupToRegexMap {
 		groupsToBan = append(groupsToBan, pattern)
@@ -32,7 +39,8 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 	}
 	eventToRemoveRegex = append(eventToRemoveRegex, groupsToBan...)
 
-	// Filter events with options
+	// Add to regex every events that are not in the selected options
+	// As options are already part of others mentions, they're already in the regex, so we just have to remove them from it if they're selected
 	for _, option := range options {
 		switch option {
 		case "cpp":
@@ -52,7 +60,9 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 		}
 	}
 
-	// Filter by option group
+	// Add to regex every events that are not in the selected option groups
+	// We take all the regex of option groups, and remove the selected ones
+	// Then we add the remaining ones to the regex to remove
 	allOptionGroups := make([]string, 0, len(optionGroupNumberToRegexMap))
 	for _, pattern := range optionGroupNumberToRegexMap {
 		allOptionGroups = append(allOptionGroups, pattern)
@@ -76,10 +86,13 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 		}
 	}
 
+	// Return the filtered calendar
 	return filteredCal
-
 }
 
+/*
+Removes a string from a list of strings
+*/
 func removeStringFromList(s []string, r string) []string {
 	for i, v := range s {
 		if v == r {
