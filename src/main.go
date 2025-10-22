@@ -8,7 +8,7 @@ import (
 	ics "github.com/arran4/golang-ical"
 )
 
-var cal *ics.Calendar
+var cal *ics.Calendar = ics.NewCalendar()
 
 func main() {
 
@@ -42,8 +42,10 @@ func main() {
 		var optionGroups []OptionGroup
 		json.Unmarshal([]byte(query.Get("optionGroups")), &optionGroups)
 
+		// Get the filtered calendar
 		filteredCal := filterCalendar(mentions, groups, options, optionGroups)
 
+		// Return the ics file to the user
 		w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
 		w.Header().Set("Content-Disposition", "attachment; filename=calendar.ics")
 		fmt.Fprint(w, filteredCal.Serialize())

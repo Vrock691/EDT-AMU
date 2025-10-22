@@ -11,52 +11,53 @@ import (
 /*
 Filters the calendar events based on the selected mentions, groups, options, and option groups
 */
-func filterCalendar(mentions []Mention, groups []Group, options []Option, optionGroups []OptionGroup) ics.Calendar {
+func filterCalendar(mentions []Mention, groups []Group, options []Option, optionGroups []OptionGroup) *ics.Calendar {
 
 	// Create a regex expression to remove undesired events
-	var eventToRemoveRegex []string
+	var eventToExcludeRegex []string
 
 	// Copy the source calendar
-	filteredCal := *cal
+	filteredCal := ics.NewCalendar()
+	filteredCal.SetName("M1 Informatique")
 
 	// Add to regex every events that are not in the selected mentions
 	for _, mention := range mentions {
 		if codes, exists := mentionToCodesMap[string(mention)]; exists {
-			eventToRemoveRegex = append(eventToRemoveRegex, codes...)
+			eventToExcludeRegex = append(eventToExcludeRegex, codes...)
 		}
 	}
 
 	// Add to regex every events that are not in the selected groups
-	groupsToBan := make([]string, 0, len(groupToRegexMap))
+	groupsToExclude := make([]string, 0, len(groupToRegexMap))
 	for _, pattern := range groupToRegexMap {
-		groupsToBan = append(groupsToBan, pattern)
+		groupsToExclude = append(groupsToExclude, pattern)
 	}
 
 	for _, group := range groups {
 		if pattern, exists := groupToRegexMap[group]; exists {
-			groupsToBan = removeStringFromList(groupsToBan, pattern)
+			groupsToExclude = removeStringFromList(groupsToExclude, pattern)
 		}
 	}
-	eventToRemoveRegex = append(eventToRemoveRegex, groupsToBan...)
+	eventToExcludeRegex = append(eventToExcludeRegex, groupsToExclude...)
 
 	// Add to regex every events that are not in the selected options
 	// As options are already part of others mentions, they're already in the regex, so we just have to remove them from it if they're selected
 	for _, option := range options {
 		switch option {
 		case "cpp":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROG_CPP)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_PROG_CPP)
 		case "crypto":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_CRYPTOGRAPHIE)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_CRYPTOGRAPHIE)
 		case "intro-science-donnees":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_SDD_AA)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_SDD_AA)
 		case "methode-numeriques":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_METHODE_NUM_INFORMATIQUE)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_METHODE_NUM_INFORMATIQUE)
 		case "prog-fonctionnelle":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROG_FONCTIONNELLE)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_PROG_FONCTIONNELLE)
 		case "proba":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_PROBA_POUR_INFORMATIQUE)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_PROBA_POUR_INFORMATIQUE)
 		case "securite-des-apps":
-			eventToRemoveRegex = removeStringFromList(eventToRemoveRegex, CODE_SECURITE_DES_APPS)
+			eventToExcludeRegex = removeStringFromList(eventToExcludeRegex, CODE_SECURITE_DES_APPS)
 		}
 	}
 
@@ -72,16 +73,17 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 			allOptionGroups = removeStringFromList(allOptionGroups, pattern)
 		}
 	}
-	eventToRemoveRegex = append(eventToRemoveRegex, allOptionGroups...)
+	eventToExcludeRegex = append(eventToExcludeRegex, allOptionGroups...)
 
 	// Filter events with the regex created previously
-	fmt.Println(strings.Join(eventToRemoveRegex, "|"))
-	for _, value := range filteredCal.Events() {
+	fmt.Println(strings.Join(eventToExcludeRegex, "|"))
+	for _, value := range cal.Events() {
 		if value.GetProperty(ics.ComponentProperty(ics.PropertySummary)) != nil {
 			summary := value.GetProperty(ics.ComponentProperty(ics.PropertySummary)).Value
-			matched, _ := regexp.MatchString(strings.Join(eventToRemoveRegex, "|"), summary)
-			if matched {
-				filteredCal.RemoveEvent(value.Id())
+			matched, _ := regexp.MatchString(strings.Join(eventToExcludeRegex, "|"), summary)
+			// Add event to the filtered calendar if it's excluded by the regex
+			if !matched {
+				filteredCal.AddEvent(value.Id())
 			}
 		}
 	}
