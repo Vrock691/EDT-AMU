@@ -83,7 +83,7 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 			matched, _ := regexp.MatchString(strings.Join(eventToExcludeRegex, "|"), summary)
 			// Add event to the filtered calendar if it's excluded by the regex
 			if !matched {
-				filteredCal.AddEvent(value.Id())
+				filteredCal.AddVEvent(value)
 			}
 		}
 	}
