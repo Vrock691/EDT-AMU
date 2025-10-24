@@ -16,8 +16,13 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 	// Create a regex expression to remove undesired events
 	var eventToRemoveRegex []string
 
-	// Copy the source calendar
-	filteredCal := *cal
+	// Check if calendar has been fetched
+	if cal == nil {
+		return *ics.NewCalendar()
+	}
+
+	// Create a new calendar (deep copy by building fresh)
+	filteredCal := *ics.NewCalendar()
 
 	// Add to regex every events that are not in the selected mentions
 	for _, mention := range mentions {
@@ -74,14 +79,22 @@ func filterCalendar(mentions []Mention, groups []Group, options []Option, option
 	}
 	eventToRemoveRegex = append(eventToRemoveRegex, allOptionGroups...)
 
-	// Filter events with the regex created previously
-	fmt.Println(strings.Join(eventToRemoveRegex, "|"))
-	for _, value := range filteredCal.Events() {
-		if value.GetProperty(ics.ComponentProperty(ics.PropertySummary)) != nil {
-			summary := value.GetProperty(ics.ComponentProperty(ics.PropertySummary)).Value
-			matched, _ := regexp.MatchString(strings.Join(eventToRemoveRegex, "|"), summary)
-			if matched {
-				filteredCal.RemoveEvent(value.Id())
+	// Compile the regex once for performance
+	regexPattern := strings.Join(eventToRemoveRegex, "|")
+	fmt.Println(regexPattern)
+	regex, err := regexp.Compile(regexPattern)
+	if err != nil {
+		fmt.Println("Error compiling regex:", err)
+		return *ics.NewCalendar()
+	}
+
+	// Add only events that should NOT be removed
+	for _, event := range cal.Events() {
+		if event.GetProperty(ics.ComponentProperty(ics.PropertySummary)) != nil {
+			summary := event.GetProperty(ics.ComponentProperty(ics.PropertySummary)).Value
+			if !regex.MatchString(summary) {
+				// Keep this event (it doesn't match the removal pattern)
+				filteredCal.AddVEvent(event)
 			}
 		}
 	}
